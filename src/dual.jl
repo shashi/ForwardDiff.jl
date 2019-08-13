@@ -59,13 +59,17 @@ tag can be extracted, so it should be used in the _innermost_ function.
     return Dual{T}(convert(C, value), convert(Partials{N,C}, partials))
 end
 
+# we intend for the right cassette context to
+# intercept calls to dualtag
+dualtag() = nothing
+
 @inline Dual{T}(value, partials::Tuple) where {T} = Dual{T}(value, Partials(partials))
 @inline Dual{T}(value, partials::Tuple{}) where {T} = Dual{T}(value, Partials{0,typeof(value)}(partials))
 @inline Dual{T}(value) where {T} = Dual{T}(value, ())
 @inline Dual{T}(x::Dual{T}) where {T} = Dual{T}(x, ())
 @inline Dual{T}(value, partial1, partials...) where {T} = Dual{T}(value, tuple(partial1, partials...))
 @inline Dual{T}(value::V, ::Chunk{N}, p::Val{i}) where {T,V,N,i} = Dual{T}(value, single_seed(Partials{N,V}, p))
-@inline Dual(args...) = Dual{Nothing}(args...)
+@inline Dual(args...) = Dual{typeof(dualtag())}(args...)
 
 # we define these special cases so that the "constructor <--> convert" pun holds for `Dual`
 @inline Dual{T,V,N}(x::Dual{T,V,N}) where {T,V,N} = x
