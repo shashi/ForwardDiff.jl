@@ -46,7 +46,7 @@ objects will appear outside `Dual{a}` objects.
 This is important when working with nested differentiation: currently, only the outermost
 tag can be extracted, so it should be used in the _innermost_ function.
 """
-≺(a,b) = throw(DualMismatchError(a,b))
+@noinline ≺(a,b) = throw(DualMismatchError(a,b))
 
 ################
 # Constructors #
@@ -369,7 +369,7 @@ Base.AbstractFloat(d::Dual{T,V,N}) where {T,V,N} = convert(Dual{T,promote_type(V
 ###################################
 
 @inline Base.conj(d::Dual) = d
-
+#=
 for (M, f, arity) in DiffRules.diffrules()
     in((M, f), ((:Base, :^), (:NaNMath, :pow), (:Base, :/), (:Base, :+), (:Base, :-))) && continue
     if arity == 1
@@ -380,6 +380,7 @@ for (M, f, arity) in DiffRules.diffrules()
         error("ForwardDiff currently only knows how to autogenerate Dual definitions for unary and binary functions.")
     end
 end
+=#
 
 #################
 # Special Cases #
@@ -387,6 +388,8 @@ end
 
 # +/- #
 #-----#
+#
+#=
 
 @define_binary_dual_op(
     Base.:+,
@@ -598,6 +601,8 @@ end
     sd, cd = sincos(value(d))
     return (Dual{T}(sd, cd * partials(d)), Dual{T}(cd, -sd * partials(d)))
 end
+
+=#
 
 ###################
 # Pretty Printing #

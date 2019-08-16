@@ -8,6 +8,8 @@ using LinearAlgebra
 # Perturbation Confusion (Issue #83) #
 #------------------------------------#
 
+dualrun() do
+
 D = ForwardDiff.derivative
 
 @test D(x -> x * D(y -> x + y, 1), 1) == 1
@@ -72,5 +74,5 @@ end
     end
 end == 0.0
 
-
+end
 end # module
